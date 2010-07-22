@@ -8,11 +8,21 @@ use Test::Double::Expectation;
 
 =head1 NAME
 
-Test::Double - Record-and-verify interface for Test::MockObject
+Test::Double - Record-and-verify style mocking library.
+
+=head1 SYNOPSIS
+
+  my $double = Test::Double->new
+  $double->expects('print');
+  
+  my $io = $double->replay;
+  $io->print('hello world');
+  
+  ok($io->verify);
 
 =head1 DESCRIPTION
 
-Test::Double is a record-and-verify style Mocking library.
+Test::Double is a record-and-verify style mocking library.
 
 =head1 CLASS METHODS
 
@@ -134,6 +144,26 @@ sub verify {
 
 1;
 __END__
+
+=head1 DESIGN
+
+Test::Dobule is heavily inspired from other language's mock library
+Especially Mox (Python) and Mocha (Ruby).
+
+But it has a little different interface.
+
+=head2 "replay"
+
+Test::Dobule's "replay" don't switch mode.
+
+=head2 "excepts" vs. AUTOLOAD
+
+Mox has AUTOLOAD-style interface.
+However the interface need to reserve some method name,
+such as "replay" or "verify".
+
+And "Comparator" are difficult to learn.
+L<http://code.google.com/p/pymox/wiki/MoxDocumentation#Comparators>
 
 =head1 AUTHOR
 
