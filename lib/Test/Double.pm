@@ -152,17 +152,19 @@ Especially Mox (Python) and Mocha (Ruby).
 
 But it has a little different interface.
 
-=head2 "replay"
+=head2 Need to call "replay" method but it returns object
 
-Test::Dobule's "replay" don't switch mode.
+Mocha don't need to call "replay" method.
+But the interface need to reserve some method name such as "expects".
 
-=head2 "excepts" vs. AUTOLOAD
+Mox need to call "replay" but it switch pre-created instances.
+The interface is not straightforward.
+
+=head2 Need to call "excepts", not AUTOLOAD hack
 
 Mox has AUTOLOAD-style interface.
-However the interface need to reserve some method name,
-such as "replay" or "verify".
-
-And "Comparator" are difficult to learn.
+But the interface need to reserve some method name too.
+And "Comparator" is difficult to learn.
 L<http://code.google.com/p/pymox/wiki/MoxDocumentation#Comparators>
 
 =head1 AUTHOR
