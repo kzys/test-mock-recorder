@@ -2,7 +2,7 @@ package Test::Double;
 use strict;
 use warnings;
 use base qw(Class::Accessor::Fast);
-__PACKAGE__->mk_ro_accessors(qw(_mock _index _recorded));
+__PACKAGE__->mk_ro_accessors(qw(_mock _index _expectations));
 use Test::MockObject;
 use Test::Double::Expectation;
 
@@ -27,7 +27,7 @@ sub new {
     return $class->SUPER::new({
         _mock  => Test::MockObject->new,
         _index => -1,
-        _recorded => [],
+        _expectations => [],
     });
 }
 
@@ -44,25 +44,25 @@ sub _expects_one {
 
     $self->_mock->mock(
         $method => sub {
-            my $record = $self->_recorded->[ $self->_index ];
-            if (! $record) {
+            my $expectation = $self->_expectations->[ $self->_index ];
+            if (! $expectation) {
                 die sprintf('"%s" called, but not expected', $method);
             }
+
             $self->{_index}++;
-            if ($record->dies) {
-                die $record->dies;
+
+            if ($expectation->dies) {
+                die $expectation->dies;
             } else {
-                return $record->returns;
+                return $expectation->returns;
             }
         }
     );
 
-    my $expectation = Test::Double::Expectation->new({
-        method => $method
-    });
-    push @{ $self->_recorded }, $expectation;
+    my $result = Test::Double::Expectation->new({ method => $method });
+    push @{ $self->_expectations }, $result;
 
-    return $expectation;
+    return $result;
 }
 
 =head2 expects($method1 => $ret1, $method2 => $ret2, ...)
@@ -86,7 +86,7 @@ sub expects {
     my $self = shift;
 
     if (scalar @_ == 1) {
-        return $self->_expects_one(@_)
+        return $self->_expects_one(@_);
     }
 
     for (_slice(2, @_)) {
@@ -113,15 +113,15 @@ sub verify {
     my ($self) = @_;
 
     my $i = 1;
-    for my $expects (@{ $self->_recorded }) {
+    for my $expectation (@{ $self->_expectations }) {
         my @actual = $self->_mock->next_call;
         if (! $actual[0]) {
             warn sprintf(
                 q{The %dth call of this instance isn't "%s"},
-                $i, $expects->method
+                $i, $expectation->method
             );
         }
-        if ($actual[0] && $expects->method eq $actual[0]) {
+        if ($actual[0] && $actual[0] eq $expectation->method) {
             ;
         } else {
             return 0;
