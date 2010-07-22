@@ -6,6 +6,22 @@ __PACKAGE__->mk_ro_accessors(qw(_mock _index _recorded));
 use Test::MockObject;
 use Test::Double::Expectation;
 
+=head1 NAME
+
+Test::Double - Record-and-verify interface for Test::MockObject
+
+=head1 DESCRIPTION
+
+Test::Double is a record-and-verify style Mocking library.
+
+=head1 CLASS METHODS
+
+=head2 new()
+
+Constructor.
+
+=cut
+
 sub new {
     my ($class) = @_;
     return $class->SUPER::new({
@@ -15,16 +31,13 @@ sub new {
     });
 }
 
-sub _slice {
-    my ($n, @src) = @_;
+=head1 INSTANCE METHODS
 
-    my $max = scalar @src / $n - 1;
-    my @result;
-    for my $i (0...$max) {
-        push @result, [ map { $src[$i * $n + $_] } 0...$n ];
-    }
-    return @result;
-}
+=head2 expects($method)
+
+Append exceptation of calling method named $method.
+
+=cut
 
 sub _expects_one {
     my ($self, $method) = @_;
@@ -52,6 +65,23 @@ sub _expects_one {
     return $expectation;
 }
 
+=head2 expects($method1 => $ret1, $method2 => $ret2, ...)
+
+Short-form of one-argument "expects" method.
+
+=cut
+
+sub _slice {
+    my ($n, @src) = @_;
+
+    my $max = scalar @src / $n - 1;
+    my @result;
+    for my $i (0...$max) {
+        push @result, [ map { $src[$i * $n + $_] } 0...$n ];
+    }
+    return @result;
+}
+
 sub expects {
     my $self = shift;
 
@@ -65,11 +95,19 @@ sub expects {
     }
 }
 
+=head2 replay()
+
+=cut
+
 sub replay {
     my ($self) = @_;
     $self->{_index} = 0;
     return $self->_mock;
 }
+
+=head2 verify()
+
+=cut
 
 sub verify {
     my ($self) = @_;
@@ -95,3 +133,19 @@ sub verify {
 }
 
 1;
+__END__
+
+=head1 AUTHOR
+
+KATO Kazuyoshi E<lt>kato.kazuyoshi@gmail.comE<gt>
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<http://code.google.com/p/pymox/> L<http://mocha.rubyforge.org/> L<http://xunitpatterns.com/Test%20Double.html>
+
+=cut
