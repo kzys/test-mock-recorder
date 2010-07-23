@@ -4,14 +4,33 @@ use Test::More;
 
 use_ok 'Test::Double';
 
-my $double = Test::Double->new;
-$double->expects('print')->code(
-    sub { like($_[1], qr/^hello /) }
-);
+{
+    my $double = Test::Double->new;
+    $double->expects('print')->with(['hello world']);
 
-my $io = $double->replay;
-$io->print('hello world');
+    my $io;
 
-ok($double->verify);
+    $io = $double->replay;
+    $io->print('hello world');
+    ok($double->verify, 'good arguments');
+
+    $io = $double->replay;
+    eval {
+        $io->print('hello foobar');
+    };
+    ok($@, 'bad arguments');
+};
+
+{
+    my $double = Test::Double->new;
+    $double->expects('print')->code(
+        sub { like($_[1], qr/^hello /) }
+    );
+
+    my $io = $double->replay;
+    $io->print('hello foobar');
+    ok($double->verify);
+};
+
 
 done_testing;
