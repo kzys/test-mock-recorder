@@ -156,7 +156,10 @@ sub verify {
         if ($actual[0] && $actual[0] eq $expectation->method) {
             ;
         } else {
-            return 0;
+            die sprintf(
+                q{The %s invocation of the mock should be "%s" but called method was "%s"},
+                _nth($i), $expectation->method, $actual[0]
+            );
         }
         $i++;
     }

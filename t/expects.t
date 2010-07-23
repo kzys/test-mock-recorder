@@ -11,9 +11,17 @@ sub assert_mock {
     is($obj1->second, 2, 'replay');
     ok($double->verify($obj1), 'verified');
 
-    my $obj2 = $double->replay;
-    $obj2->second;
-    ok(! $double->verify($obj2), 'not verified');
+    eval {
+        $double->verify_ok(
+            sub {
+                shift->second;
+            }
+        );
+    };
+    like(
+        "$@",
+        qr/^The first invocation of the mock should be "first" but called method was "second" /
+    );
 
     eval {
         $double->verify_ok(
