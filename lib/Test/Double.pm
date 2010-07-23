@@ -99,7 +99,7 @@ sub replay {
         $callback->($mock);
         return $self->verify($mock);
     } else {
-        $self->{_mock} = $mock;
+        return $mock;
     }
 }
 
