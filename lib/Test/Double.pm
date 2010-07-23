@@ -14,16 +14,24 @@ Test::Double - Record-and-verify style mocking library.
 
 =head1 SYNOPSIS
 
-  my $double = Test::Double->new
-  $double->expects('print');
+  my $double = Test::Double->new;
+  $double->expects('print')->with('hello');
   
   $double->verify_ok(
-    sub { my $io = shift; $io->print('hello world'); }
+    sub { my $io = shift; $io->print('hello'); }
   );
+  
+  # If you don't like callback-style interface...
+  my $io = $double->replay;
+  $io->print('hello');
+  $double->verify_ok($io);
 
 =head1 DESCRIPTION
 
 Test::Double is a record-and-verify style mocking library.
+
+It wraps Test::MockObject and provides functionality of
+testing a sequence of method calls.
 
 =head1 CLASS METHODS
 
@@ -44,7 +52,8 @@ sub new {
 
 =head2 expects($method)
 
-Append exceptation of calling method named $method.
+Append exceptation of calling method named $method and
+returns new Test::Double::Expectation instance.
 
 =cut
 
@@ -87,7 +96,12 @@ sub expects {
     }
 }
 
-=head2 replay($callback)
+=head2 replay(), replay($callback)
+
+Creates new mock object.
+
+If you supply $callback, "replay" pass a new mock to $callback
+and verify, returns the result of "verify" method.
 
 =cut
 
@@ -163,6 +177,8 @@ sub _replay {
 
 =head2 verify($mock)
 
+Verify $mock and returns true when success.
+
 =cut
 
 sub verify {
@@ -194,16 +210,19 @@ sub verify {
     return 1;
 }
 
-=head2 verify_ok($callback)
+=head2 verify_ok($callback), verify_ok($mock)
 
 =cut
 
 my $Test = Test::Builder->new;
 
 sub verify_ok {
-    my ($self, $callback) = @_;
-    my $flag = $self->replay($callback);
-    $Test->ok($flag, 'verified');
+    my ($self, $arg) = @_;
+    if (ref $arg eq 'CODE') {
+        $Test->ok($self->replay($arg), 'verified');
+    } else {
+        $Test->ok($self->verify($arg), 'verified');
+    }
 }
 
 1;
