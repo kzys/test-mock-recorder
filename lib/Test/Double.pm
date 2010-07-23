@@ -16,10 +16,9 @@ Test::Double - Record-and-verify style mocking library.
   my $double = Test::Double->new
   $double->expects('print');
   
-  my $io = $double->replay;
-  $io->print('hello world');
-  
-  ok($io->verify);
+  $double->verify_ok(
+    sub { my $io = shift; $io->print('hello world'); }
+  );
 
 =head1 DESCRIPTION
 
