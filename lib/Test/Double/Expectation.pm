@@ -10,13 +10,23 @@ use Data::Compare;
 use Data::Dumper;
 
 sub with {
+    my ($self, @argv) = @_;
+    $self->_with(\@argv);
+}
+
+sub without_arguments {
+    my ($self) = @_;
+    $self->_with([]);
+}
+
+sub _with {
     my ($self, $argv_ref) = @_;
 
     if ($argv_ref) {
-        $self->{with} = $argv_ref;
+        $self->{_with} = $argv_ref;
         return $self;
     } else {
-        return $self->{with};
+        return $self->{_with};
     }
 }
 
@@ -26,12 +36,12 @@ sub verify {
     if ($self->code) {
         return $self->code->(@argv);
     } else {
-        if ($self->with) {
-            if (Compare($self->with, [ splice @argv, 1 ])) {
+        if ($self->_with) {
+            if (Compare($self->_with, [ splice @argv, 1 ])) {
                 ;
             } else {
                 die sprintf(
-                    qq{Expected method "%s" called, but the arguments are not expected.},
+                    qq{Expected method "%s" called, but the arguments are not expected},
                     $self->method,
                 );
             }

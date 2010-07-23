@@ -5,6 +5,7 @@ use base qw(Class::Accessor::Fast);
 __PACKAGE__->mk_ro_accessors(qw(_mock _expectations));
 use Test::MockObject;
 use Test::Double::Expectation;
+use Test::Builder;
 
 =head1 NAME
 
@@ -157,6 +158,18 @@ sub verify {
     }
 
     return 1;
+}
+
+=head2 verify_ok($callback)
+
+=cut
+
+my $Test = Test::Builder->new;
+
+sub verify_ok {
+    my ($self, $callback) = @_;
+    my $flag = $self->replay($callback);
+    $Test->ok($flag, 'verified');
 }
 
 1;

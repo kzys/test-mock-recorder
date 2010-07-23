@@ -6,7 +6,7 @@ use_ok 'Test::Double';
 
 {
     my $double = Test::Double->new;
-    $double->expects('print')->with(['hello world']);
+    $double->expects('print')->with('hello world');
 
     $double->replay(
         sub {
@@ -26,19 +26,17 @@ use_ok 'Test::Double';
 
 {
     my $double = Test::Double->new;
-    $double->expects('close')->with([]);
+    $double->expects('close')->without_arguments;
 
-    my $io;
+    $double->verify_ok(
+        sub { shift->close }
+    );
 
-    $io = $double->replay;
-    $io->close;
-    ok($double->verify($io));
-
-    $io = $double->replay;
+    my $io = $double->replay;
     eval {
         $io->close('foobar');
     };
-    ok($@, 'This is why arrayref');
+    ok($@, 'without_arguments');
 };
 
 
