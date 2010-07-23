@@ -98,10 +98,12 @@ sub expects {
 
 =head2 replay(), replay($callback)
 
-Creates new mock object.
+Creates new mock object and pass it.
 
-If you supply $callback, "replay" pass a new mock to $callback
-and verify, returns the result of "verify" method.
+Without $callback, the method returns new mock object.
+
+With $callback, the method pass a new mock to $callback and verify,
+returns the result of verification.
 
 =cut
 
@@ -212,6 +214,13 @@ sub verify {
 
 =head2 verify_ok($callback), verify_ok($mock)
 
+Verify and call Test::Builder's ok.
+
+With $callback (code reference),
+the method calls $callback with new mock object.
+
+With $mock (not code reference), the method just verify $mock.
+
 =cut
 
 my $Test = Test::Builder->new;
@@ -249,7 +258,7 @@ __END__
 =head1 DESIGN
 
 Test::Dobule is heavily inspired from other language's mock library
-Especially Mox (Python) and Mocha (Ruby).
+especially Mox (Python) and Mocha (Ruby).
 
 But it has a little different interface.
 
@@ -265,7 +274,7 @@ The interface is not straightforward.
 
 Mox has AUTOLOAD-style interface.
 But the interface need to reserve some method name too.
-And "Comparator" is difficult to learn.
+And "Comparator" is difficult to learn I think.
 L<http://code.google.com/p/pymox/wiki/MoxDocumentation#Comparators>
 
 =head1 AUTHOR
