@@ -5,7 +5,6 @@ use base qw(Class::Accessor::Fast);
 __PACKAGE__->mk_ro_accessors(qw(_mock _index _expectations));
 use Test::MockObject;
 use Test::Double::Expectation;
-use Data::Compare;
 
 =head1 NAME
 
@@ -62,20 +61,7 @@ sub _expects_one {
 
             $self->{_index}++;
 
-            if ($expectation->code) {
-                return $expectation->code->(@_);
-            } else {
-                if ($expectation->with) {
-                    shift;
-                    Compare($expectation->with, \@_) or die;
-                }
-
-                if ($expectation->dies) {
-                    die $expectation->dies;
-                } else {
-                    return $expectation->returns;
-                }
-            }
+            return $expectation->verify(@_);
         }
     );
 
