@@ -92,6 +92,19 @@ sub expects {
 =cut
 
 sub replay {
+    my ($self, $callback) = @_;
+
+    my $mock = $self->_replay;
+
+    if ($callback) {
+        $callback->($mock);
+        return $self->_verify($mock);
+    } else {
+        $self->{_mock} = $mock;
+    }
+}
+
+sub _replay {
     my ($self) = @_;
 
     my $result = Test::MockObject->new;
@@ -126,10 +139,15 @@ sub replay {
 
 sub verify {
     my ($self) = @_;
+    return $self->_verify($self->_mock);
+}
+
+sub _verify {
+    my ($self, $mock) = @_;
 
     my $i = 1;
     for my $expectation (@{ $self->_expectations }) {
-        my @actual = $self->_mock->next_call;
+        my @actual = $mock->next_call;
         if (! $actual[0]) {
             warn sprintf(
                 q{The %dth call of this instance isn't "%s"},

@@ -8,17 +8,20 @@ use_ok 'Test::Double';
     my $double = Test::Double->new;
     $double->expects('print')->with(['hello world']);
 
-    my $io;
+    $double->replay(
+        sub {
+            shift->print('hello world');
+        }
+    );
 
-    $io = $double->replay;
-    $io->print('hello world');
-    ok($double->verify, 'good arguments');
-
-    $io = $double->replay;
-    eval {
-        $io->print('hello foobar');
-    };
-    ok($@, 'bad arguments');
+    $double->replay(
+        sub {
+            eval {
+                shift->print('hello foobar');
+            };
+            ok($@, 'bad arguments');
+        }
+    );
 };
 
 {
