@@ -106,7 +106,7 @@ sub replay {
 sub _nth {
     my ($n) = @_;
 
-    [ qw(xxx first second third) ]->[ $n ] || "${n}nd";
+    [ qw(first second third) ]->[ $n-1 ] || "${n}nd";
 }
 
 sub _replay {
