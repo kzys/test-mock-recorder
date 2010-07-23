@@ -61,10 +61,14 @@ sub _expects_one {
 
             $self->{_index}++;
 
-            if ($expectation->dies) {
-                die $expectation->dies;
+            if ($expectation->code) {
+                return $expectation->code->(@_);
             } else {
-                return $expectation->returns;
+                if ($expectation->dies) {
+                    die $expectation->dies;
+                } else {
+                    return $expectation->returns;
+                }
             }
         }
     );
