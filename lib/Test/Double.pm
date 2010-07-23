@@ -127,8 +127,6 @@ sub _replay {
         );
     }
 
-    $self->{_mock} = $result;
-
     return $result;
 }
 
