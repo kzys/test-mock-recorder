@@ -35,7 +35,6 @@ Constructor.
 sub new {
     my ($class) = @_;
     return $class->SUPER::new({
-        _mock  => Test::MockObject->new,
         _index => -1,
         _expectations => [],
     });
@@ -51,19 +50,6 @@ Append exceptation of calling method named $method.
 
 sub _expects_one {
     my ($self, $method) = @_;
-
-    $self->_mock->mock(
-        $method => sub {
-            my $expectation = $self->_expectations->[ $self->_index ];
-            if (! $expectation) {
-                die sprintf('"%s" called, but not expected', $method);
-            }
-
-            $self->{_index}++;
-
-            return $expectation->verify(@_);
-        }
-    );
 
     my $result = Test::Double::Expectation->new({ method => $method });
     push @{ $self->_expectations }, $result;
@@ -107,8 +93,31 @@ sub expects {
 
 sub replay {
     my ($self) = @_;
+
+    my $result = Test::MockObject->new;
     $self->{_index} = 0;
-    return $self->_mock;
+
+    for my $expectation (@{ $self->_expectations }) {
+        $result->mock(
+            $expectation->method => sub {
+                my $e = $self->_expectations->[ $self->_index ];
+                if (! $e) {
+                    die sprintf(
+                        '"%s" called, but not expected',
+                        $expectation->method
+                    );
+                }
+
+                $self->{_index}++;
+
+                return $e->verify(@_);
+            }
+        );
+    }
+
+    $self->{_mock} = $result;
+
+    return $result;
 }
 
 =head2 verify()
