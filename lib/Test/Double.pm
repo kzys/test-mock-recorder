@@ -86,7 +86,7 @@ sub expects {
     }
 }
 
-=head2 replay()
+=head2 replay($callback)
 
 =cut
 
@@ -143,7 +143,7 @@ sub verify {
     for my $expectation (@{ $self->_expectations }) {
         my @actual = $mock->next_call;
         if (! $actual[0]) {
-            warn sprintf(
+            die sprintf(
                 q{The %dth call of this instance isn't "%s"},
                 $i, $expectation->method
             );
