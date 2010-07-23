@@ -217,11 +217,29 @@ sub verify {
 my $Test = Test::Builder->new;
 
 sub verify_ok {
-    my ($self, $arg) = @_;
+    my ($self, $arg, $test_name) = @_;
+
+    $test_name ||= $self->default_test_name;
+
     if (ref $arg eq 'CODE') {
-        $Test->ok($self->replay($arg), 'verified');
+        $Test->ok($self->replay($arg), $test_name);
     } else {
-        $Test->ok($self->verify($arg), 'verified');
+        $Test->ok($self->verify($arg), $test_name);
+    }
+}
+
+sub default_test_name {
+    my ($self) = @_;
+
+    my @methods = map {
+        sprintf(q{'%s'}, $_->method);
+    } @{ $self->_expectations };
+
+    if (scalar @methods > 1) {
+        my $last = pop @methods;
+        return 'called ' . (join ', ', @methods) . ' and ' . $last;
+    } else {
+        return 'called ' . (join ', ', @methods);
     }
 }
 
