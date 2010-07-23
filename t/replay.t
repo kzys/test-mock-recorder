@@ -14,7 +14,7 @@ eval {
         }
     );
 };
-ok($@, 'expected but not called');
+like("$@", qr/The first invocation of the mock is "print" but not called /);
 
 ok(
     $double->replay(

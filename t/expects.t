@@ -14,6 +14,21 @@ sub assert_mock {
     my $obj2 = $double->replay;
     $obj2->second;
     ok(! $double->verify($obj2), 'not verified');
+
+    eval {
+        $double->verify_ok(
+            sub {
+                my $obj = shift;
+                $obj->second;
+                $obj->second;
+                $obj->second;
+            }
+        );
+    };
+    like(
+        "$@",
+        qr/^The third innvocation of the mock is "second" but not expected /
+    );
 }
 
 my $d1 = Test::Double->new;

@@ -103,6 +103,12 @@ sub replay {
     }
 }
 
+sub _nth {
+    my ($n) = @_;
+
+    [ qw(xxx first second third) ]->[ $n ] || "${n}nd";
+}
+
 sub _replay {
     my ($self) = @_;
 
@@ -115,8 +121,9 @@ sub _replay {
                 my $e = $self->_expectations->[ $called ];
                 if (! $e) {
                     die sprintf(
-                        '"%s" called, but not expected',
-                        $expectation->method
+                        'The %s innvocation of the mock is "%s" but not expected',
+                        _nth($called+1),
+                        $expectation->method,
                     );
                 }
 
@@ -142,8 +149,8 @@ sub verify {
         my @actual = $mock->next_call;
         if (! $actual[0]) {
             die sprintf(
-                q{The %dth call of this instance isn't "%s"},
-                $i, $expectation->method
+                q{The %s invocation of the mock is "%s" but not called},
+                _nth($i), $expectation->method
             );
         }
         if ($actual[0] && $actual[0] eq $expectation->method) {
