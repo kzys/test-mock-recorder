@@ -35,7 +35,7 @@ sub assert_mock {
     };
     like(
         "$@",
-        qr/^The third innvocation of the mock is "second" but not expected /
+        qr/^The third invocation of the mock is "second" but not expected /
     );
 }
 

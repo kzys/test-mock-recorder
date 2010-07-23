@@ -6,6 +6,7 @@ __PACKAGE__->mk_ro_accessors(qw(_mock _expectations));
 use Test::MockObject;
 use Test::Double::Expectation;
 use Test::Builder;
+use UNIVERSAL::isa;
 
 =head1 NAME
 
@@ -118,18 +119,36 @@ sub _replay {
     for my $expectation (@{ $self->_expectations }) {
         $result->mock(
             $expectation->method => sub {
+                my $where =
+                    sprintf('%s invocation of the mock', _nth($called+1));
                 my $e = $self->_expectations->[ $called ];
+                $called++;
                 if (! $e) {
                     die sprintf(
-                        'The %s innvocation of the mock is "%s" but not expected',
-                        _nth($called+1),
+                        'The %s is "%s" but not expected',
+                        $where,
                         $expectation->method,
                     );
                 }
 
-                $called++;
-
-                return $e->verify(@_);
+                my $ret;
+                eval {
+                    $ret = $e->verify(@_);
+                };
+                if ($@) {
+                    if ($@->isa('Test::Double::InvalidArguments')) {
+                        die sprintf(
+                            'Called "%s" with invalid arguments at the %s',
+                            $@->method,
+                            $where,
+                        );
+                    } else {
+                        warn $@;
+                        die $@;
+                    }
+                } else {
+                    return $ret;
+                }
             }
         );
     }

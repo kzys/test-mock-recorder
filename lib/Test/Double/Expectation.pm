@@ -6,6 +6,7 @@ use base qw(Class::Accessor::Fast);
 __PACKAGE__->mk_ro_accessors(qw(method));
 __PACKAGE__->mk_accessors(qw(method returns dies code));
 
+use Test::Double::InvalidArguments;
 use Data::Compare;
 
 sub with {
@@ -39,10 +40,9 @@ sub verify {
             if (Compare($self->_with, [ splice @argv, 1 ])) {
                 ;
             } else {
-                die sprintf(
-                    qq{Expected method "%s" called, but the arguments are not expected},
-                    $self->method,
-                );
+                die Test::Double::InvalidArguments->new({
+                    method => $self->method
+                });
             }
         }
 

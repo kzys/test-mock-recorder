@@ -19,7 +19,10 @@ use_ok 'Test::Double';
             eval {
                 shift->print('hello foobar');
             };
-            ok($@, 'bad arguments');
+            like(
+                "$@",
+                qr/Called "print" with invalid arguments at the first invocation of the mock /
+            );
         }
     );
 };
