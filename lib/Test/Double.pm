@@ -110,46 +110,51 @@ sub _nth {
     [ qw(first second third) ]->[ $n-1 ] || "${n}nd";
 }
 
+sub _create_mock_method {
+    my ($self, $expectation, $index_ref) = @_;
+
+    return sub {
+        my $where =
+            sprintf('%s invocation of the mock', _nth($$index_ref + 1));
+        my $e = $self->_expectations->[ $$index_ref ];
+        $$index_ref++;
+        if (! $e) {
+            die sprintf(
+                'The %s is "%s" but not expected',
+                $where,
+                $expectation->method,
+            );
+        }
+
+        my $ret;
+        eval {
+            $ret = $e->verify(@_);
+        };
+        if ($@) {
+            if ($@->isa('Test::Double::InvalidArguments')) {
+                die sprintf(
+                    'Called "%s" with invalid arguments at the %s',
+                    $@->method,
+                    $where,
+                );
+            } else {
+                die $@;
+            }
+        } else {
+            return $ret;
+        }
+    };
+}
+
 sub _replay {
     my ($self) = @_;
 
     my $result = Test::MockObject->new;
     my $called = 0;
 
-    for my $expectation (@{ $self->_expectations }) {
+    for my $e (@{ $self->_expectations }) {
         $result->mock(
-            $expectation->method => sub {
-                my $where =
-                    sprintf('%s invocation of the mock', _nth($called+1));
-                my $e = $self->_expectations->[ $called ];
-                $called++;
-                if (! $e) {
-                    die sprintf(
-                        'The %s is "%s" but not expected',
-                        $where,
-                        $expectation->method,
-                    );
-                }
-
-                my $ret;
-                eval {
-                    $ret = $e->verify(@_);
-                };
-                if ($@) {
-                    if ($@->isa('Test::Double::InvalidArguments')) {
-                        die sprintf(
-                            'Called "%s" with invalid arguments at the %s',
-                            $@->method,
-                            $where,
-                        );
-                    } else {
-                        warn $@;
-                        die $@;
-                    }
-                } else {
-                    return $ret;
-                }
-            }
+            $e->method => $self->_create_mock_method($e, \$called)
         );
     }
 
@@ -165,19 +170,22 @@ sub verify {
 
     my $i = 1;
     for my $expectation (@{ $self->_expectations }) {
+        my $where =
+            sprintf('%s invocation of the mock', _nth($i));
+
         my @actual = $mock->next_call;
         if (! $actual[0]) {
             die sprintf(
-                q{The %s invocation of the mock is "%s" but not called},
-                _nth($i), $expectation->method
+                q{The %s is "%s" but not called},
+                $where, $expectation->method
             );
         }
         if ($actual[0] && $actual[0] eq $expectation->method) {
             ;
         } else {
             die sprintf(
-                q{The %s invocation of the mock should be "%s" but called method was "%s"},
-                _nth($i), $expectation->method, $actual[0]
+                q{The %s should be "%s" but called method was "%s"},
+                $where, $expectation->method, $actual[0]
             );
         }
         $i++;
