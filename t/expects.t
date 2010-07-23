@@ -7,48 +7,48 @@ sub assert_mock {
     my ($double) = @_;
 
     my $obj1 = $double->replay;
-    is($obj1->first, 1, 'replay');
-    is($obj1->second, 2, 'replay');
+    is($obj1->print('hello'), 1, 'replay');
+    is($obj1->close, 2, 'replay');
     ok($double->verify($obj1), 'verified');
 
     eval {
         $double->verify_ok(
             sub {
-                shift->second;
+                shift->close;
             }
         );
     };
     like(
         "$@",
-        qr/^The first invocation of the mock should be "first" but called method was "second" /
+        qr/^The first invocation of the mock should be "print" but called method was "close" /
     );
 
     eval {
         $double->verify_ok(
             sub {
                 my $obj = shift;
-                $obj->second;
-                $obj->second;
-                $obj->second;
+                $obj->print('hello');
+                $obj->close;
+                $obj->print;
             }
         );
     };
     like(
         "$@",
-        qr/^The third invocation of the mock is "second" but not expected /
+        qr/^The third invocation of the mock is "print" but not expected /
     );
 }
 
 my $d1 = Test::Double->new;
-$d1->expects('first')->returns(1);
-$d1->expects('second')->returns(2);
+$d1->expects('print')->returns(1);
+$d1->expects('close')->returns(2);
 assert_mock($d1);
 
 # short-form
 my $d2 = Test::Double->new;
 $d2->expects(
-    first => 1,
-    second => 2,
+    print => 1,
+    close => 2,
 );
 assert_mock($d2);
 
