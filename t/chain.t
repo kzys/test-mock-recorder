@@ -12,6 +12,6 @@ $double->expects('print')->with(['hello world'])->returns($len);
 my $io = $double->replay;
 is($io->print('hello world'), $len);
 
-$double->verify;
+$double->verify($io);
 
 done_testing;

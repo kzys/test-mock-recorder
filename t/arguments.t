@@ -32,7 +32,7 @@ use_ok 'Test::Double';
 
     $io = $double->replay;
     $io->close;
-    ok($double->verify);
+    ok($double->verify($io));
 
     $io = $double->replay;
     eval {
@@ -50,7 +50,7 @@ use_ok 'Test::Double';
 
     my $io = $double->replay;
     $io->print('hello foobar');
-    ok($double->verify);
+    ok($double->verify($io));
 };
 
 done_testing;

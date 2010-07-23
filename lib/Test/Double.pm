@@ -2,7 +2,7 @@ package Test::Double;
 use strict;
 use warnings;
 use base qw(Class::Accessor::Fast);
-__PACKAGE__->mk_ro_accessors(qw(_mock _index _expectations));
+__PACKAGE__->mk_ro_accessors(qw(_mock _expectations));
 use Test::MockObject;
 use Test::Double::Expectation;
 
@@ -35,7 +35,6 @@ Constructor.
 sub new {
     my ($class) = @_;
     return $class->SUPER::new({
-        _index => -1,
         _expectations => [],
     });
 }
@@ -98,7 +97,7 @@ sub replay {
 
     if ($callback) {
         $callback->($mock);
-        return $self->_verify($mock);
+        return $self->verify($mock);
     } else {
         $self->{_mock} = $mock;
     }
@@ -108,12 +107,12 @@ sub _replay {
     my ($self) = @_;
 
     my $result = Test::MockObject->new;
-    $self->{_index} = 0;
+    my $called = 0;
 
     for my $expectation (@{ $self->_expectations }) {
         $result->mock(
             $expectation->method => sub {
-                my $e = $self->_expectations->[ $self->_index ];
+                my $e = $self->_expectations->[ $called ];
                 if (! $e) {
                     die sprintf(
                         '"%s" called, but not expected',
@@ -121,7 +120,7 @@ sub _replay {
                     );
                 }
 
-                $self->{_index}++;
+                $called++;
 
                 return $e->verify(@_);
             }
@@ -133,16 +132,11 @@ sub _replay {
     return $result;
 }
 
-=head2 verify()
+=head2 verify($mock)
 
 =cut
 
 sub verify {
-    my ($self) = @_;
-    return $self->_verify($self->_mock);
-}
-
-sub _verify {
     my ($self, $mock) = @_;
 
     my $i = 1;

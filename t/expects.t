@@ -9,11 +9,11 @@ sub assert_mock {
     my $obj1 = $double->replay;
     is($obj1->first, 1, 'replay');
     is($obj1->second, 2, 'replay');
-    ok($double->verify, 'verified');
+    ok($double->verify($obj1), 'verified');
 
     my $obj2 = $double->replay;
     $obj2->second;
-    ok(! $double->verify, 'not verified');
+    ok(! $double->verify($obj2), 'not verified');
 }
 
 my $d1 = Test::Double->new;
