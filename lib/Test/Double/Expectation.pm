@@ -7,7 +7,6 @@ __PACKAGE__->mk_ro_accessors(qw(method));
 __PACKAGE__->mk_accessors(qw(method returns dies code));
 
 use Data::Compare;
-use Data::Dumper;
 
 sub with {
     my ($self, @argv) = @_;
