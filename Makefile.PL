@@ -1,8 +1,8 @@
 #! perl
 use inc::Module::Install;
 
-name 'Test-Double';
-all_from 'lib/Test/Double.pm';
+name 'Test-Mock-Record';
+all_from 'lib/Test/Mock/Record.pm';
 
 requires 'Test::MockObject' >= 0;
 requires 'Class::Accessor::Fast' => 0;

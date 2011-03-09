@@ -1,20 +1,20 @@
-package Test::Double;
+package Test::Mock::Record;
 use strict;
 use warnings;
 use base qw(Class::Accessor::Fast);
 __PACKAGE__->mk_ro_accessors(qw(_mock _expectations));
 use Test::MockObject;
-use Test::Double::Expectation;
+use Test::Mock::Record::Expectation;
 use Test::Builder;
 use UNIVERSAL::isa;
 
 =head1 NAME
 
-Test::Double - Record-and-verify style mocking library.
+Test::Mock::Record - Record-and-verify style mocking library.
 
 =head1 SYNOPSIS
 
-  my $double = Test::Double->new;
+  my $double = Test::Mock::Record->new;
   $double->expects('print')->with('hello');
   
   $double->verify_ok(
@@ -28,7 +28,7 @@ Test::Double - Record-and-verify style mocking library.
 
 =head1 DESCRIPTION
 
-Test::Double is a record-and-verify style mocking library.
+Test::Mock::Record is a record-and-verify style mocking library.
 
 It wraps Test::MockObject and provides functionality of
 testing a sequence of method calls.
@@ -53,14 +53,14 @@ sub new {
 =head2 expects($method)
 
 Append exceptation of calling method named $method and
-returns new Test::Double::Expectation instance.
+returns new Test::Mock::Record::Expectation instance.
 
 =cut
 
 sub _expects_one {
     my ($self, $method) = @_;
 
-    my $result = Test::Double::Expectation->new({ method => $method });
+    my $result = Test::Mock::Record::Expectation->new({ method => $method });
     push @{ $self->_expectations }, $result;
 
     return $result;
@@ -147,7 +147,7 @@ sub _create_mock_method {
             $ret = $e->verify(@_);
         };
         if ($@) {
-            if ($@->isa('Test::Double::InvalidArguments')) {
+            if ($@->isa('Test::Mock::Record::InvalidArguments')) {
                 die sprintf(
                     'Called "%s" with invalid arguments at the %s',
                     $@->method,

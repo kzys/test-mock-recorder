@@ -2,10 +2,10 @@ use strict;
 use warnings;
 use Test::More;
 
-use_ok 'Test::Double';
+use_ok 'Test::Mock::Record';
 
 subtest 'A' => sub {
-    my $double = Test::Double->new;
+    my $double = Test::Mock::Record->new;
     $double->expects(
         print => 1,
     );
@@ -14,7 +14,7 @@ subtest 'A' => sub {
 };
 
 subtest 'A and B' => sub {
-    my $double = Test::Double->new;
+    my $double = Test::Mock::Record->new;
     $double->expects(
         print => 1,
         close => 1,
@@ -24,7 +24,7 @@ subtest 'A and B' => sub {
 };
 
 subtest 'A, B and C' => sub {
-    my $double = Test::Double->new;
+    my $double = Test::Mock::Record->new;
     $double->expects(
         print => 1,
         print => 1,

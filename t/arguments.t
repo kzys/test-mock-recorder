@@ -2,10 +2,10 @@ use strict;
 use warnings;
 use Test::More;
 
-use_ok 'Test::Double';
+use_ok 'Test::Mock::Record';
 
 {
-    my $double = Test::Double->new;
+    my $double = Test::Mock::Record->new;
     $double->expects('print')->with('hello world');
 
     $double->replay(
@@ -28,7 +28,7 @@ use_ok 'Test::Double';
 };
 
 {
-    my $double = Test::Double->new;
+    my $double = Test::Mock::Record->new;
     $double->expects('close')->without_arguments;
 
     $double->verify_ok(
@@ -44,7 +44,7 @@ use_ok 'Test::Double';
 
 
 {
-    my $double = Test::Double->new;
+    my $double = Test::Mock::Record->new;
     $double->expects('print')->code(
         sub { like($_[1], qr/^hello /) }
     );
