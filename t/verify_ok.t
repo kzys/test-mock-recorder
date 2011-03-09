@@ -2,9 +2,9 @@ use strict;
 use warnings;
 use Test::More;
 
-use_ok 'Test::Mock::Record';
+use_ok 'Test::Mock::Recorder';
 
-my $double = Test::Mock::Record->new;
+my $double = Test::Mock::Recorder->new;
 $double->expects('print')->with('hello');
 
 # callback

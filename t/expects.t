@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-use Test::Mock::Record;
+use Test::Mock::Recorder;
 
 sub assert_mock {
     my ($double) = @_;
@@ -39,13 +39,13 @@ sub assert_mock {
     );
 }
 
-my $d1 = Test::Mock::Record->new;
+my $d1 = Test::Mock::Recorder->new;
 $d1->expects('print')->returns(1);
 $d1->expects('close')->returns(2);
 assert_mock($d1);
 
 # short-form
-my $d2 = Test::Mock::Record->new;
+my $d2 = Test::Mock::Recorder->new;
 $d2->expects(
     print => 1,
     close => 2,

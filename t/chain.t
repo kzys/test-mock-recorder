@@ -2,11 +2,11 @@ use strict;
 use warnings;
 use Test::More;
 
-use_ok 'Test::Mock::Record';
+use_ok 'Test::Mock::Recorder';
 
 my $len = length 'hello world';
 
-my $double = Test::Mock::Record->new;
+my $double = Test::Mock::Recorder->new;
 $double->expects('print')->with('hello world')->returns($len);
 
 my $io = $double->replay;

@@ -1,8 +1,8 @@
 #! perl
 use inc::Module::Install;
 
-name 'Test-Mock-Record';
-all_from 'lib/Test/Mock/Record.pm';
+name 'Test-Mock-Recorder';
+all_from 'lib/Test/Mock/Recorder.pm';
 
 requires 'Test::MockObject' >= 0;
 requires 'Class::Accessor::Fast' => 0;

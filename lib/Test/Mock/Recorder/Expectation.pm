@@ -1,4 +1,4 @@
-package Test::Mock::Record::Expectation;
+package Test::Mock::Recorder::Expectation;
 use strict;
 use warnings;
 
@@ -6,7 +6,7 @@ use base qw(Class::Accessor::Fast);
 __PACKAGE__->mk_ro_accessors(qw(method));
 __PACKAGE__->mk_accessors(qw(method returns dies code));
 
-use Test::Mock::Record::InvalidArguments;
+use Test::Mock::Recorder::InvalidArguments;
 use Data::Compare;
 
 sub with {
@@ -40,7 +40,7 @@ sub verify {
             if (Compare($self->_with, [ splice @argv, 1 ])) {
                 ;
             } else {
-                die Test::Mock::Record::InvalidArguments->new({
+                die Test::Mock::Recorder::InvalidArguments->new({
                     method => $self->method
                 });
             }

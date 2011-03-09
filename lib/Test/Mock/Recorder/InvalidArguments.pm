@@ -1,4 +1,4 @@
-package Test::Mock::Record::InvalidArguments;
+package Test::Mock::Recorder::InvalidArguments;
 use strict;
 use warnings;
 use base qw(Class::Accessor::Fast);

@@ -20,9 +20,10 @@ sub synopsis_of {
     return $result;
 }
 
-use_ok 'Test::Mock::Record';
+use_ok 'Test::Mock::Recorder';
 
-my $src = synopsis_of('lib/Test/Mock::Record.pm');
+my $src = synopsis_of('lib/Test/Mock/Recorder.pm');
+ok($src);
 eval($src);
 
 is("$@", '', 'eval synopsis');

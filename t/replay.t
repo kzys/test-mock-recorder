@@ -2,8 +2,8 @@ use strict;
 use warnings;
 use Test::More;
 
-use_ok 'Test::Mock::Record';
-my $double = Test::Mock::Record->new;
+use_ok 'Test::Mock::Recorder';
+my $double = Test::Mock::Recorder->new;
 $double->expects('print');
 isnt($double->replay, $double->replay);
 
