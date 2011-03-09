@@ -10,25 +10,25 @@ use UNIVERSAL::isa;
 
 =head1 NAME
 
-Test::Mock::Record - Record-and-verify style mocking library.
+Test::Mock::Recorder - Record-and-verify style mocking library.
 
 =head1 SYNOPSIS
 
-  my $double = Test::Mock::Recorder->new;
-  $double->expects('print')->with('hello');
+  my $rec = Test::Mock::Recorder->new;
+  $rec->expects('print')->with('hello');
   
-  $double->verify_ok(
+  $rec->verify_ok(
     sub { my $io = shift; $io->print('hello'); }
   );
   
   # If you don't like callback-style interface...
-  my $io = $double->replay;
+  my $io = $rec->replay;
   $io->print('hello');
-  $double->verify_ok($io);
+  $rec->verify_ok($io);
 
 =head1 DESCRIPTION
 
-Test::Mock::Record is a record-and-verify style mocking library.
+Test::Mock::Recorder is a record-and-verify style mocking library.
 
 It wraps Test::MockObject and provides functionality of
 testing a sequence of method calls.
@@ -257,7 +257,7 @@ __END__
 
 =head1 DESIGN
 
-Test::Dobule is heavily inspired from other language's mock library
+Test::Mock::Recorder is heavily inspired from other language's mock library
 especially Mox (Python) and Mocha (Ruby).
 
 But it has a little different interface.
@@ -279,7 +279,7 @@ L<http://code.google.com/p/pymox/wiki/MoxDocumentation#Comparators>
 
 =head1 AUTHOR
 
-KATO Kazuyoshi E<lt>kato.kazuyoshi@gmail.comE<gt>
+Kato Kazuyoshi E<lt>kato.kazuyoshi@gmail.comE<gt>
 
 =head1 LICENSE
 
@@ -288,6 +288,31 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<http://code.google.com/p/pymox/> L<http://mocha.rubyforge.org/> L<http://xunitpatterns.com/Test%20Double.html>
+=head2 Test::Expectation
+
+L<http://search.cpan.org/dist/Test-Expectation/>
+
+Test::Expectation provides record style interface
+(expects, with, to_return, ...)
+but it provides RSpec like interface (it_is_a, it_should, ...) too.
+
+=head2 Test::Mock::Class
+
+L<http://search.cpan.org/dist/Test-Mock-Class/>
+
+Test::Mock::Class provides record style interface
+(mock_invoke, mock_return, ...) but it depends Moose!
+
+=head2 Mox
+
+L<http://code.google.com/p/pymox/>
+
+=head2 Mocha
+
+L<http://mocha.rubyforge.org/>
+
+=head2 Test Double
+
+L<http://xunitpatterns.com/Test%20Double.html>
 
 =cut
