@@ -8,6 +8,8 @@ use Test::Mock::Recorder::Expectation;
 use Test::Builder;
 use UNIVERSAL::isa;
 
+our $VERSION = '0.01';
+
 =head1 NAME
 
 Test::Mock::Recorder - Record-and-verify style mocking library.
